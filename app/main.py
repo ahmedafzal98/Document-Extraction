@@ -4,6 +4,7 @@ from app.routes import pdf_routes, upload_routes
 from app.routes.extract_router import router as extract_router
 from app.routes.dataset_routes import router as dataset_router
 import uvicorn
+import os
 
 app = FastAPI(title="PDF Processing API")
 
