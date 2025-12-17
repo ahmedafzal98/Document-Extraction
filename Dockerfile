@@ -12,12 +12,13 @@ WORKDIR /app
 # Copy requirements first (for caching)
 COPY requirements.txt .
 
-# Install system dependencies needed for some Python packages and wget for Cloud SQL Proxy
+# Install system dependencies needed for Python packages, wget, and ca-certificates
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
     libpq-dev \
     wget \
+    ca-certificates \
     && pip install --no-cache-dir -r requirements.txt \
     && apt-get purge -y --auto-remove build-essential gcc wget \
     && apt-get clean
