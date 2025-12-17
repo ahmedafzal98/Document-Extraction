@@ -1,0 +1,24 @@
+runtime: python310
+
+entrypoint: gunicorn -k uvicorn.workers.UvicornWorker app.main:app
+
+instance_class: F2
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 2
+
+env_variables:
+  PROJECT_ID: "267816589183"
+  LOCATION: "us"
+  PROCESSOR_ID: "3bd2a3a3becdadcb"
+
+  DB_HOST: "34.171.67.88"
+  DB_PORT: "5432"
+  DB_USER: "postgres"
+  DB_PASSWORD: "Ahmed123!"
+  DB_NAME: "document_extraction_db"
+
+  PUBSUB_TOPIC_ID: "pdf-processing-topic"
+
+  GCS_BUCKET_NAME: "personal-injury-document-bucket"

@@ -1,17 +1,30 @@
 import json
-from google.cloud import pubsub_v1
+import logging
 import os
-from dotenv import load_dotenv
+from google.cloud import pubsub_v1
 
-load_dotenv()
+logger = logging.getLogger(__name__)
 
 PROJECT_ID = os.getenv("PROJECT_ID")
-TOPIC_ID = "pdf-processing-topic"
+TOPIC_ID = os.getenv("PUBSUB_TOPIC_ID", "pdf-processing-topic")
 
-publisher = pubsub_v1.PublisherClient()
-topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+_publisher = None
+
+
+def get_publisher():
+    global _publisher
+    if _publisher is None:
+        _publisher = pubsub_v1.PublisherClient()
+    return _publisher
+
 
 def publish_document_message(document_id: int, gcs_path: str):
+    if not PROJECT_ID:
+        raise RuntimeError("PROJECT_ID is not set")
+
+    publisher = get_publisher()
+    topic_path = publisher.topic_path(PROJECT_ID, TOPIC_ID)
+
     message = {
         "documents": [
             {
@@ -22,7 +35,17 @@ def publish_document_message(document_id: int, gcs_path: str):
         "dataset_file": "client_dataset.csv"
     }
 
-    publisher.publish(
-        topic_path,
-        json.dumps(message).encode("utf-8")
-    )
+    try:
+        future = publisher.publish(
+            topic_path,
+            json.dumps(message).encode("utf-8")
+        )
+
+        message_id = future.result(timeout=10)
+        logger.info(f"📤 Pub/Sub message published: {message_id}")
+
+        return message_id
+
+    except Exception as e:
+        logger.error(f"❌ Failed to publish Pub/Sub message: {e}")
+        raise

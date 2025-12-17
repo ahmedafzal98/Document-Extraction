@@ -11,7 +11,6 @@ from dotenv import load_dotenv
 from fuzzywuzzy import fuzz
 
 # ------------------- Load .env -------------------
-load_dotenv()
 
 # ------------------- Configure logging -------------------
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

@@ -5,9 +5,6 @@ from pdf_processing import process_pdf
 from dotenv import load_dotenv
 import os
 
-
-load_dotenv()
-
 router = APIRouter()
 
 # Environment variables for Document AI
