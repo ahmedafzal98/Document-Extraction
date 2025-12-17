@@ -1,5 +1,6 @@
 fastapi
 uvicorn[standard]
+python-dotenv
 google-cloud-documentai
 google-cloud-pubsub
 pandas
@@ -7,6 +8,7 @@ pypdf
 rapidfuzz
 openpyxl
 python-multipart
-dotenv
 fuzzywuzzy
 python-Levenshtein
+sqlalchemy
+psycopg2-binary
