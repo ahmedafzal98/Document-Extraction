@@ -20,13 +20,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     ca-certificates \
     && pip install --no-cache-dir -r requirements.txt \
-    && apt-get purge -y --auto-remove build-essential gcc wget \
+    && apt-get purge -y --auto-remove build-essential gcc \
     && apt-get clean
 
 # Copy project files
 COPY . .
 
-# Download Cloud SQL Auth Proxy
+# Download Cloud SQL Auth Proxy (wget is still available at this point)
 RUN wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O /cloud_sql_proxy \
     && chmod +x /cloud_sql_proxy
 
