@@ -1,7 +1,7 @@
 # Use an official Python runtime as a parent image
 FROM python:3.13-slim
 
-# Set environment variables for Python
+# Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PORT=8080
@@ -26,12 +26,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy project files
 COPY . .
 
-# Download Cloud SQL Auth Proxy (wget is still available at this point)
+# Download Cloud SQL Auth Proxy
 RUN wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O /cloud_sql_proxy \
     && chmod +x /cloud_sql_proxy
 
-# Expose the port Render expects
+# Copy entrypoint script and make it executable
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
+# Expose port
 EXPOSE 8080
 
-# Start Cloud SQL Proxy in background and then run FastAPI with Gunicorn + Uvicorn
-CMD ["/bin/bash", "-c", "/cloud_sql_proxy -instances=elliptical-feat-476423-q8:us-central1:documet-extraction=tcp:5432 & gunicorn -w 1 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8080"]
+# Use entrypoint script to start proxy + FastAPI
+CMD ["./entrypoint.sh"]
